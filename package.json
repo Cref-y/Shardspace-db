@@ -26,6 +26,7 @@
     "@libp2p/plaintext": "^2.0.15",
     "@libp2p/tcp": "^10.0.20",
     "@libp2p/websockets": "^9.1.5",
+    "@nodeutils/defaults-deep": "^1.1.0",
     "dotenv": "^16.4.7",
     "fs": "^0.0.1-security",
     "libp2p": "^2.6.2",
