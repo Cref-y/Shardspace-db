@@ -7,6 +7,7 @@ import { kadDHT } from '@libp2p/kad-dht';
 import { identify } from '@libp2p/identify'; 
 import defaultsDeep from '@nodeutils/defaults-deep';
 import { createLibp2p as create } from 'libp2p';
+import { bootstrap } from '@libp2p/bootstrap';
 
 export async function createNode(_options = {}) {
     const defaults = {
@@ -23,20 +24,25 @@ export async function createNode(_options = {}) {
         connectionEncrypters: [
             noise()
         ],
-        peerDiscovery: [
-            mdns()
+        peerDiscovery: [  // ✅ Move peer discovery here
+            mdns(),
+            bootstrap({
+                list: [  // List of known bootstrap peers
+                    '/ip4/127.0.0.1/tcp/4001/p2p/QmSomeHash'
+                ]
+            })
         ],
         services: {
             identify: identify(),  
-            dht: kadDHT({           // ✅ Add DHT as a service
+            dht: kadDHT({  // ✅ Keep DHT as a service
                 protocol: '/ipfs/kad/1.0.0',
-                clientMode: false    // Ensure it participates in routing
+                clientMode: false
             })
         }
     };
 
     const node = await create(defaultsDeep(_options, defaults));
-
+    console.log(`Libp2p node started with Peer ID: ${node.peerId.toString()}`);
     await node.start();
     return node;
 }
